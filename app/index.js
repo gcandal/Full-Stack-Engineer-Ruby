@@ -1,9 +1,15 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var PropTypes = React.PropTypes;
+import React, { Component, PropTypes } from "react"
+import { render } from "react-dom"
+import thunkMiddleware from "redux-thunk"
+import createLogger from "redux-logger"
+import { createStore, applyMiddleware } from "redux"
+import { tryGetComics } from "./actions"
+import rootReducer from "./reducers"
 
+const VALUE_CHANGE_INTERVAL = 4000;
+const ENTER_CHAR_CODE = 13;
 
-class SearchInput extends React.Component {
+class SearchInput extends Component {
     constructor(props) {
         super(props);
         this.timer_id = -1;
@@ -17,11 +23,11 @@ class SearchInput extends React.Component {
     handleValueChange(e) {
         this.setState({text: e.target.value});
         this.stopTimer();
-        this.timer_id = setTimeout(this.triggerSearch, SearchInput.VALUE_CHANGE_INTERVAL);
+        this.timer_id = setTimeout(this.triggerSearch, VALUE_CHANGE_INTERVAL);
     }
 
     handleKeyPress(e) {
-        if(e.charCode != 13)
+        if(e.charCode != ENTER_CHAR_CODE)
             return;
         e.preventDefault();
         this.triggerSearch();
@@ -56,7 +62,6 @@ class SearchInput extends React.Component {
 SearchInput.propTypes = {
     onSearchChange: PropTypes.func
 };
-SearchInput.VALUE_CHANGE_INTERVAL = 4000;
 
 var NavigationButtons = React.createClass({
     render: function() {
@@ -119,7 +124,7 @@ var comicsList = [
     }
 ];
 
-class Marvel extends React.Component {
+class Marvel extends Component {
     constructor(props) {
         super(props);
         this.state = {comics: comicsList};
@@ -147,4 +152,16 @@ class Marvel extends React.Component {
     }
 }
 
-ReactDOM.render(<Marvel/>, document.getElementById('app'));
+render(<Marvel/>, document.getElementById("app"));
+
+const store = createStore(
+    rootReducer,
+    applyMiddleware(
+        thunkMiddleware,
+        createLogger()
+    )
+);
+
+store.dispatch(tryGetComics("", 0)).then(() =>
+    console.log(store.getState())
+);

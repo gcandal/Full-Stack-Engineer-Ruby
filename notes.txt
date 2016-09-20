@@ -1,0 +1,12 @@
+Features:
+- React + Redux + ES6 + Grape
+- Grape acts as middleware
+
+Missing:
+- Client side caching
+- Client side network requests' error handling
+- Character name <-> id mapping with suitable database such as Redis
+- Serve covers with reduced size instead of using Marvel's source directly
+- Sprites (not as important as it used to be, due to HTTP 2's server push)
+- Favorite comics discriminated by account
+- Tests :(
