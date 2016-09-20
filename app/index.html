@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marvel Comicz</title>
+    <style>
+        body {
+            background-color: #2b2b2b;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: rgba(237,35,36, 0.95);
+            padding: 25px 0;
+            width: 100%;
+            position: fixed;
+            z-index: 1;
+        }
+
+        header > img.logo,
+        header > .search-form {
+            margin: 0 auto;
+            display: block;
+        }
+
+        header > img.logo {
+            margin-bottom: 25px;
+        }
+
+        header > .search-form {
+            max-width: 360px;
+            padding: 0 22px;
+        }
+
+        header > .search-form > .search-input {
+            padding: 12px 10px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            border: 1px solid #c3c3c3;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        header > .search-form > .search-input[placeholder] {
+            text-overflow: ellipsis;
+            font-size: 17px;
+        }
+
+        main {
+            padding: 35px 18px 18px 18px;
+            margin: 0 auto;
+            max-width: 1200px;
+            text-align: center;
+        }
+
+        figure.comic {
+            display: inline-block;
+            margin: 0 25px 25px 0;
+            position: relative;
+            -webkit-box-shadow: 10px 10px 37px 0 rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: 10px 10px 37px 0 rgba(0, 0, 0, 0.75);
+            box-shadow: 10px 10px 37px 0 rgba(0, 0, 0, 0.75);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        figure.comic.liked {
+            cursor: initial;
+        }
+
+        figure.comic > .overlay,
+        figure.comic > figcaption.info {
+            opacity: 0;
+            animation: fade-out 0.15s ease-in-out;
+            -o-animation: fade-out 0.15s ease-in-out;
+            -moz-animation: fade-out 0.15s ease-in-out;
+            -webkit-animation: fade-out 0.15s ease-in-out;
+        }
+
+        figure.comic:hover > .overlay,
+        figure.comic:hover > figcaption.info {
+            opacity: 1;
+            animation: fade-in 0.15s ease-in-out;
+            -o-animation: fade-in 0.15s ease-in-out;
+            -moz-animation: fade-in 0.15s ease-in-out;
+            -webkit-animation: fade-in 0.15s ease-in-out;
+        }
+
+        figure.comic > .overlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+        }
+
+        figure.comic > .overlay {
+            border: 10px solid transparent;
+            background: rgba(0,0,0,0.6) url(../assets/heart_off.png) top right no-repeat;
+        }
+
+        figure.comic.liked > .overlay {
+            border-color: #ea2d2f;
+            background-image: url(../assets/heart_on.png);
+        }
+
+        figure.comic > img.cover {
+            max-width: 210px;
+        }
+
+        figure.comic > figcaption.info {
+            position: absolute;
+            bottom: 0;
+            padding: 10px 10px 15px 10px;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-size: 0;
+            font-weight: 700;
+        }
+
+        figure.comic > figcaption.info > div.title {
+            font-size: 20px;
+            padding: 0 0 7px 7px;
+        }
+
+        figure.comic > figcaption.info > div.issue-nr,
+        figure.comic > figcaption.info > div.year {
+            line-height: 32px;
+            height: 30px;
+            vertical-align: bottom;
+        }
+
+        figure.comic > figcaption.info > div.issue-nr {
+            background-color: #ea2d2f;
+            font-size: 20px;
+            padding: 0 10px 0 7px;
+            display: inline-block;
+        }
+
+        figure.comic > figcaption.info > div.year {
+            background-color: #2b2b2b;
+            font-style: italic;
+            font-size: 16px;
+            font-weight: 300;
+            display: inline-block;
+            height: 30px;
+            padding: 0 9px 0 7px;
+        }
+
+        .button {
+            background-color: #ffffff;
+            color: #ea2d2f;
+            text-transform: uppercase;
+            display: inline-block;
+            font-weight: 900;
+            font-size: 27px;
+            cursor: pointer;
+            padding: 0 7px;
+            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+            -o-transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+            -moz-transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+            opacity: 1;
+            animation: fade-out 0.15s ease-in-out;
+            -o-animation: fade-out 0.15s ease-in-out;
+            -moz-animation: fade-out 0.15s ease-in-out;
+            -webkit-animation: fade-out 0.15s ease-in-out;
+        }
+
+        .button:hover {
+            color: #ffffff;
+            background-color: #ea2d2f;
+        }
+
+        .clearfix {
+            clear: both;
+        }
+
+        .hidden {
+            opacity: 0;
+            animation: fade-in 0.15s ease-in-out;
+            -o-animation: fade-in 0.15s ease-in-out;
+            -moz-animation: fade-in 0.15s ease-in-out;
+            -webkit-animation: fade-in 0.15s ease-in-out;
+        }
+
+        footer {
+            padding: 30px 25px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        footer > div.navigation-buttons > div.button.next {
+            float: right;
+        }
+
+        @-webkit-keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @-webkit-keyframes fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+</body>
+</html>
