@@ -44,6 +44,7 @@ function isGetting(state = false, action) {
             return state;
     }
 }
+
 const rootReducer = combineReducers({
     page,
     searchText,

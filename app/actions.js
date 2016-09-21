@@ -25,22 +25,31 @@ export function requestComics(text, page) {
 export function receiveComics(json) {
     return {
         type: RECEIVE_COMICS,
-        comics: json.comics.map(comic => comic.data)
+        comics: json.comics
     }
 }
 
 function comicsAlreadyLoaded(state, text, page) {
-    return !state.isGetting && state.searchText == text && state.page == page;
+    return !state.isGetting && state.comics.length > 0 && state.searchText == text && state.page == page;
 }
+
+var comicsList = [
+    {
+        imageUrl: "http://i.annihil.us/u/prod/marvel/i/mg/c/00/57a0a42dce54f.jpg",
+        title: "Tales of suspense featuring the power of iron man",
+        issueNr: 132,
+        year: 1948,
+        liked: true
+    }
+];
 
 function getComics(text, page) {
     return function (dispatch) {
         dispatch(requestComics(text, page));
-
         return fetch("https://www.my-swear.com/api/ping")
             .then(response => response.json())
             .then(json =>
-                dispatch(receiveComics({comics: [{yey: 1}]}))
+                dispatch(receiveComics({comics: comicsList}))
             );
     }
 }
