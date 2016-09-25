@@ -4,10 +4,9 @@ import thunkMiddleware from "redux-thunk"
 import createLogger from "redux-logger"
 import { createStore, applyMiddleware } from "redux"
 
-import { tryGetComics } from "./actions"
 import rootReducer from "./reducers"
 
-import Marvel from "./containers/Marvel"
+import MarvelContainer from "./containers/Marvel"
 
 const store = createStore(
     rootReducer,
@@ -17,6 +16,4 @@ const store = createStore(
     )
 );
 
-render(<Marvel store={store}/>, document.getElementById("app"));
-
-store.dispatch(tryGetComics("", 0));
+render(<MarvelContainer store={store}/>, document.getElementById("app"));

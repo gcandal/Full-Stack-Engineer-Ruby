@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 
-const Comic = ({ title, imageUrl, issueNr, year, liked = false }) => (
-    <figure className={ "comic" + (liked? " liked" : "") } key={title}>
+const Comic = ({ id, title, imageUrl, issueNr, year, liked = false, onClick }) => (
+    <figure className={ "comic" + (liked? " liked" : "") } onClick={onClick}>
         <div className="overlay"></div>
         <img className="cover" src={imageUrl}/>
         <figcaption className="info">
@@ -13,10 +13,12 @@ const Comic = ({ title, imageUrl, issueNr, year, liked = false }) => (
 );
 
 Comic.propTypes = {
+    id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     imageUrl: PropTypes.string.isRequired,
     issueNr: PropTypes.number.isRequired,
-    year: PropTypes.number.isRequired
+    year: PropTypes.number.isRequired,
+    onClick: PropTypes.func.isRequired
 };
 
 export default Comic

@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from "react"
+import { connect } from "react-redux"
 
-const VALUE_CHANGE_INTERVAL = 4000;
+import { setSearchText } from "../actions"
+
+const VALUE_CHANGE_INTERVAL = 2000;
 const ENTER_CHAR_CODE = 13;
 
 class SearchInput extends Component {
@@ -42,19 +45,42 @@ class SearchInput extends Component {
     }
 
     render() {
+        const loadingStyle = this.props.isGetting? "" : "hidden";
         return (
             <form className="search-form">
                 <input value={this.state.text}
                        onKeyPress={this.handleKeyPress}
                        onChange={this.handleValueChange}
                        className="search-input" placeholder="Search for marvel characters or teams..."/>
+                <img className={`loading-indicator ${loadingStyle}`} src="../../assets/loading_indicator.gif" />
             </form>
         )
     }
 }
 
 SearchInput.propTypes = {
-    onSearch: PropTypes.func
+    searchText: PropTypes.string.isRequired,
+    onSearch: PropTypes.func.isRequired
 };
 
-export default SearchInput
+const mapStateToProps = ({ searchText, isGetting }) => {
+    return {
+        searchText: searchText,
+        isGetting: isGetting
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onSearch: (text) => {
+            dispatch(setSearchText(text))
+        }
+    }
+};
+
+const SearchInputContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SearchInput);
+
+export default SearchInputContainer

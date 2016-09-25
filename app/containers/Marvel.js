@@ -1,13 +1,24 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
 
-import ComicList from "../components/ComicList"
-import NavigationButtons from "../components/NavigationButtons"
-import SearchInput from "../containers/SearchInput"
+import FilteredComicList from "./FilteredComicList"
+import NavigationButtonsContainer from "./NavigationButtons"
+import SearchInputContainer from "../containers/SearchInput"
+import { tryGetComics, forceGetComics } from "../actions"
 
 class Marvel extends Component {
     constructor(props) {
         super(props);
+    }
+
+    componentDidMount() {
+        this.props.store.dispatch(tryGetComics("", 0));
+    }
+
+    componentWillReceiveProps({ page, searchText}) {
+        if (page !== this.props.page || searchText !== this.props.searchText) {
+            this.props.store.dispatch(forceGetComics(searchText, page));
+        }
     }
 
     render() {
@@ -15,13 +26,13 @@ class Marvel extends Component {
             <div className="marvel-app">
                 <header>
                     <img className="logo" src="../assets/marvel_logo.png"/>
-                    <SearchInput onSearch={this.onSearch}/>
+                    <SearchInputContainer store={this.props.store} />
                 </header>
                 <main>
-                    <ComicList comics={this.props.comics}/>
+                    <FilteredComicList store={this.props.store} />
                 </main>
                 <footer>
-                    <NavigationButtons/>
+                    <NavigationButtonsContainer store={this.props.store} />
                 </footer>
             </div>
         )
@@ -33,14 +44,18 @@ Marvel.defaultProps = {
     page: 0
 };
 
-const mapStateToProps = (state) => {
-    return {comics: state.comics}
+const mapStateToProps = ({ comics, searchText, page}) => {
+    return {
+        comics: comics,
+        searchText: searchText,
+        page: page
+    }
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         onSearch: (text) => {
-            dispatch(tryGetComics(text, ownProps.page))
+            dispatch(getComics(text, ownProps.page))
         }
     }
 };

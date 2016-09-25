@@ -1,4 +1,5 @@
 import fetch from "isomorphic-fetch"
+import MD5 from "crypto-js/md5"
 
 export const PREVIOUS_PAGE = "PREVIOUS_PAGE";
 export const NEXT_PAGE = "NEXT_PAGE";
@@ -18,14 +19,24 @@ export function setSearchText(text) {
     return {type: SET_SEARCH_TEXT, text}
 }
 
-export function requestComics(text, page) {
+function requestComics(text, page) {
     return {type: REQUEST_COMICS, text, page}
 }
+
+const getComicYear = ({ dates }) => parseInt(dates.filter(({ type, date }) => type == "focDate")[0].date.slice(0, 4));
 
 export function receiveComics(json) {
     return {
         type: RECEIVE_COMICS,
-        comics: json.comics
+        comics: json.data.results.map((comic) => (
+            {
+                id: comic.id,
+                title: comic.title,
+                issueNr: comic.issueNumber? comic.issueNumber : 0,
+                year: getComicYear(comic),
+                imageUrl: `${comic.thumbnail.path}.${comic.thumbnail.extension}`
+            }
+        ))
     }
 }
 
@@ -33,24 +44,33 @@ function comicsAlreadyLoaded(state, text, page) {
     return !state.isGetting && state.comics.length > 0 && state.searchText == text && state.page == page;
 }
 
-var comicsList = [
-    {
-        imageUrl: "http://i.annihil.us/u/prod/marvel/i/mg/c/00/57a0a42dce54f.jpg",
-        title: "Tales of suspense featuring the power of iron man",
-        issueNr: 132,
-        year: 1948,
-        liked: true
-    }
-];
+const baseUrl = "http://gateway.marvel.com/v1/public/";
+const publicKey = "1cc91305c44f0b038a170b921826744c";
+const privateKey = "6dd6d741dbc86dbee478f35ed825a15ee037782a";
+const PAGE_OFFSET = 20;
+
+const buildHash = (timestamp) => ( MD5(timestamp + privateKey + publicKey) );
+
+const buildUrl = (page) => {
+    const timestamp = Date.now();
+    const hash = buildHash(timestamp);
+    return `${baseUrl}/comics?ts=${timestamp}&apikey=${publicKey}&hash=${hash}&offset=${page * PAGE_OFFSET}`;
+};
 
 function getComics(text, page) {
     return function (dispatch) {
         dispatch(requestComics(text, page));
-        return fetch("https://www.my-swear.com/api/ping")
+        return fetch(buildUrl(page))
             .then(response => response.json())
             .then(json =>
-                dispatch(receiveComics({comics: comicsList}))
+                dispatch(receiveComics(json))
             );
+    }
+}
+
+export function forceGetComics(text, page) {
+    return function (dispatch) {
+        return dispatch(getComics(text, page));
     }
 }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Marvel Comicz</title>
-    <link rel="shortcut icon" href="http://vignette2.wikia.nocookie.net/marvelcinematicuniverse/images/d/d8/Marvel-favicon.PNG" />
+    <link rel="shortcut icon" href="../assets/favico.ico" />
     <style>
         body {
             background-color: #2b2b2b;
@@ -32,6 +32,7 @@
         header > .search-form {
             max-width: 360px;
             padding: 0 22px;
+            position: relative;
         }
 
         header > .search-form > .search-input {
@@ -43,6 +44,12 @@
             width: 100%;
             box-sizing: border-box;
             outline: none;
+        }
+
+        header > .search-form > .loading-indicator {
+            position: absolute;
+            right: 0;
+            top: 14px;
         }
 
         header > .search-form > .search-input[placeholder] {
@@ -187,6 +194,7 @@
             -o-animation: fade-in 0.15s ease-in-out;
             -moz-animation: fade-in 0.15s ease-in-out;
             -webkit-animation: fade-in 0.15s ease-in-out;
+            pointer-events: none;
         }
 
         footer {
