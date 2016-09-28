@@ -3,10 +3,10 @@ Features:
 - Grape acts as middleware
 
 Missing:
-- Client side caching
+- Caching: client side (comics), server side (requests to Marvel's API such as (character name, id) mapping with suitable database such as Redis)
 - Client side network requests' error handling
-- Character name <-> id mapping with suitable database such as Redis
-- Serve covers with reduced size instead of using Marvel's source directly
+- Serve (cached) covers with reduced size instead of using Marvel's source directly
 - Sprites (not as important as it used to be, due to HTTP 2's server push)
 - Favorite comics discriminated by account
+- Use URL as a mechanism to perform a specific search
 - Tests :(
