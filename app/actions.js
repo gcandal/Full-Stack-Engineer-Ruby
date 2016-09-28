@@ -1,11 +1,12 @@
 import fetch from "isomorphic-fetch"
-import MD5 from "crypto-js/md5"
 
 export const PREVIOUS_PAGE = "PREVIOUS_PAGE";
 export const NEXT_PAGE = "NEXT_PAGE";
 export const SET_SEARCH_TEXT = "SET_SEARCH_TEXT";
 export const REQUEST_COMICS = "REQUEST_COMICS";
 export const RECEIVE_COMICS = "RECEIVE_COMICS";
+export const MARK_FAVORITE = "MARK_FAVORITE";
+export const UNMARK_FAVORITE = "UNMARK_FAVORITE";
 
 export function previousPage() {
     return {type: PREVIOUS_PAGE}
@@ -23,44 +24,29 @@ function requestComics(text, page) {
     return {type: REQUEST_COMICS, text, page}
 }
 
-const getComicYear = ({ dates }) => parseInt(dates.filter(({ type, date }) => type == "focDate")[0].date.slice(0, 4));
-
-export function receiveComics(json) {
+function receiveComics(comics) {
     return {
         type: RECEIVE_COMICS,
-        comics: json.data.results.map((comic) => (
-            {
-                id: comic.id,
-                title: comic.title,
-                issueNr: comic.issueNumber? comic.issueNumber : 0,
-                year: getComicYear(comic),
-                imageUrl: `${comic.thumbnail.path}.${comic.thumbnail.extension}`
-            }
-        ))
+        comics: comics
     }
+}
+
+function markFavorite(id) {
+    return {type: MARK_FAVORITE, id: id}
+}
+
+function unmarkFavorite(id) {
+    return {type: UNMARK_FAVORITE, id: id}
 }
 
 function comicsAlreadyLoaded(state, text, page) {
     return !state.isGetting && state.comics.length > 0 && state.searchText == text && state.page == page;
 }
 
-const baseUrl = "http://gateway.marvel.com/v1/public/";
-const publicKey = "1cc91305c44f0b038a170b921826744c";
-const privateKey = "6dd6d741dbc86dbee478f35ed825a15ee037782a";
-const PAGE_OFFSET = 20;
-
-const buildHash = (timestamp) => ( MD5(timestamp + privateKey + publicKey) );
-
-const buildUrl = (page) => {
-    const timestamp = Date.now();
-    const hash = buildHash(timestamp);
-    return `${baseUrl}/comics?ts=${timestamp}&apikey=${publicKey}&hash=${hash}&offset=${page * PAGE_OFFSET}`;
-};
-
 function getComics(text, page) {
     return function (dispatch) {
         dispatch(requestComics(text, page));
-        return fetch(buildUrl(page))
+        return fetch(buildGetUrl(text, page))
             .then(response => response.json())
             .then(json =>
                 dispatch(receiveComics(json))
@@ -81,5 +67,34 @@ export function tryGetComics(text, page) {
         }
 
         return dispatch(getComics(text, page));
+    }
+}
+
+const BASE_URL = "http://localhost:9292/v1/";
+
+const buildGetUrl = (text, page) => {
+    return `${BASE_URL}comics?page=${page}&character=${text}`;
+};
+
+const buildPutUrl = (id, like) => {
+    return `${BASE_URL}comic/${id}/${like? "like" : "unlike"}`;
+};
+
+function setFavorite(id, liked) {
+    return function (dispatch) {
+        return fetch(buildPutUrl(id, liked), {method: "put"})
+            .then(() => dispatch(liked? markFavorite(id) : unmarkFavorite(id)));
+    }
+}
+
+export function saveMarkFavorite(id) {
+    return function (dispatch) {
+        return dispatch(setFavorite(id, true));
+    }
+}
+
+export function saveUnmarkFavorite(id) {
+    return function (dispatch) {
+        return dispatch(setFavorite(id, false));
     }
 }

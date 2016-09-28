@@ -2,7 +2,8 @@ import { combineReducers } from "redux"
 import {
     PREVIOUS_PAGE, NEXT_PAGE,
     SET_SEARCH_TEXT, REQUEST_COMICS,
-    RECEIVE_COMICS
+    RECEIVE_COMICS, MARK_FAVORITE,
+    UNMARK_FAVORITE
 } from "./actions"
 
 function page(state = 0, action) {
@@ -25,10 +26,31 @@ function searchText(state = "", action) {
     }
 }
 
+function comic(state, action) {
+    if(state.id !== action.id) {
+        return state;
+    }
+    switch(action.type) {
+        case MARK_FAVORITE:
+            return Object.assign({}, state, {
+                liked: true
+            });
+        case UNMARK_FAVORITE:
+            return Object.assign({}, state, {
+                liked: false
+            });
+        default:
+            return state;
+    }
+}
+
 function comics(state = [], action) {
     switch(action.type) {
         case RECEIVE_COMICS:
             return action.comics;
+        case UNMARK_FAVORITE:
+        case MARK_FAVORITE:
+            return state.map(c => comic(c, action));
         default:
             return state;
     }

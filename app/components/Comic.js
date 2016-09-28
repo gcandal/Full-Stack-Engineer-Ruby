@@ -2,7 +2,9 @@ import React, { PropTypes } from 'react'
 
 const Comic = ({ id, title, imageUrl, issueNr, year, liked = false, onClick }) => (
     <figure className={ "comic" + (liked? " liked" : "") } onClick={onClick}>
-        <div className="overlay"></div>
+        <div className="overlay">
+            <div className="hearth"></div>
+        </div>
         <img className="cover" src={imageUrl}/>
         <figcaption className="info">
             <div className="title">{title}</div>

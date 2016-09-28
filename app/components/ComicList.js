@@ -5,7 +5,7 @@ import Comic from "./Comic"
 const ComicsList = ({ comics = [], onComicClick }) => (
     <div className="comicsList">
         {comics.map(function(comic) {
-            return <Comic {...comic} onClick={() => onComicClick(comic.id)} key={comic.id}/>
+            return <Comic {...comic} onClick={() => onComicClick(comic.id, comic.liked)} key={comic.id}/>
         })}
     </div>
 );

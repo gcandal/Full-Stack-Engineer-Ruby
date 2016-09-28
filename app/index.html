@@ -73,10 +73,7 @@
             box-shadow: 10px 10px 37px 0 rgba(0, 0, 0, 0.75);
             text-align: left;
             cursor: pointer;
-        }
-
-        figure.comic.liked {
-            cursor: initial;
+            vertical-align: top;
         }
 
         figure.comic > .overlay,
@@ -109,11 +106,25 @@
 
         figure.comic > .overlay {
             border: 10px solid transparent;
-            background: rgba(0,0,0,0.6) url(../assets/heart_off.png) top right no-repeat;
+            background-color: rgba(0, 0, 0, 0.6);
         }
 
         figure.comic.liked > .overlay {
             border-color: #ea2d2f;
+        }
+
+        figure.comic > .overlay > .hearth {
+            background: transparent url(../assets/heart_off.png) top right no-repeat;
+            width: 40px;
+            height: 37px;
+            float: right;
+        }
+
+        figure.comic > .overlay > .hearth:hover {
+            background-image: url(../assets/heart_hover.png);
+        }
+
+        figure.comic.liked > .overlay > .hearth {
             background-image: url(../assets/heart_on.png);
         }
 
@@ -169,14 +180,10 @@
             font-size: 27px;
             cursor: pointer;
             padding: 0 7px;
-            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-            -o-transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-            -moz-transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, opacity 0.1s ease-in-out;
+            -o-transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, opacity 0.1s ease-in-out;
+            -moz-transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, opacity 0.1s ease-in-out;
             opacity: 1;
-            animation: fade-out 0.15s ease-in-out;
-            -o-animation: fade-out 0.15s ease-in-out;
-            -moz-animation: fade-out 0.15s ease-in-out;
-            -webkit-animation: fade-out 0.15s ease-in-out;
         }
 
         .button:hover {
@@ -190,10 +197,6 @@
 
         .hidden {
             opacity: 0;
-            animation: fade-in 0.15s ease-in-out;
-            -o-animation: fade-in 0.15s ease-in-out;
-            -moz-animation: fade-in 0.15s ease-in-out;
-            -webkit-animation: fade-in 0.15s ease-in-out;
             pointer-events: none;
         }
 
@@ -205,26 +208,6 @@
 
         footer > div.navigation-buttons > div.button.next {
             float: right;
-        }
-
-        @-webkit-keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @-webkit-keyframes fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        @keyframes fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; }
         }
     </style>
 </head>

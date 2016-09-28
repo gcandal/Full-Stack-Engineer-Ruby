@@ -12,7 +12,7 @@ class Marvel extends Component {
     }
 
     componentDidMount() {
-        this.props.store.dispatch(tryGetComics("", 0));
+        this.props.store.dispatch(tryGetComics("", 0, ""));
     }
 
     componentWillReceiveProps({ page, searchText}) {
